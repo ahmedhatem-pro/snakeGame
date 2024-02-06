@@ -3,7 +3,9 @@ import random
 
 gameWidth = 750
 gameHeight = 750
+spedUpSnake = 100
 snakeSpeed = 250
+normalSnakeSpeed = 250
 objectsSized = 50
 bodyParts = 3
 snakeColor = "#00FF00"       # Green
@@ -95,6 +97,7 @@ def changeDirectionUp(event):
 
 def changeDirectionDown(event):
     changeDirection('down')
+
 def changeDirection(newDirection):
 
     global direction
@@ -111,7 +114,6 @@ def changeDirection(newDirection):
     elif newDirection == 'down':
         if direction != 'up':
             direction = newDirection
-
 
 def checkCollisions(snake):
     x, y = snake.coordinates[0]
@@ -134,6 +136,94 @@ def gameOver():
     canvas.create_text(canvas.winfo_width()/2, canvas.winfo_height()/2,
                     font=('consolas',70), text="GAME OVER", fill="red", tag="gameover")
 
+def on_key_pressUp(event):
+    global consecutive_key_pressesUp
+    global snakeSpeed
+
+    consecutive_key_pressesUp += 1
+    snakeSpeed = normalSnakeSpeed
+
+    if consecutive_key_pressesUp >= 3:
+        consecutive_key_pressesUp = 0
+        snakeSpeed = spedUpSnake
+        reset_counter()
+
+def on_key_pressLeft(event):
+    global consecutive_key_pressesLeft
+    global snakeSpeed
+
+    consecutive_key_pressesLeft += 1
+    snakeSpeed = normalSnakeSpeed
+
+    if consecutive_key_pressesLeft >= 3:
+        consecutive_key_pressesLeft = 0
+        snakeSpeed = spedUpSnake
+        reset_counter()
+
+def on_key_pressRight(event):
+    global consecutive_key_pressesRight
+    global snakeSpeed
+
+    consecutive_key_pressesRight += 1
+    snakeSpeed = normalSnakeSpeed
+
+    if consecutive_key_pressesRight >= 3:
+        consecutive_key_pressesRight = 0
+        snakeSpeed = spedUpSnake
+        reset_counter()
+
+
+def on_key_pressDown(event):
+    global consecutive_key_pressesDown
+    global snakeSpeed
+
+    consecutive_key_pressesDown += 1
+    snakeSpeed = normalSnakeSpeed
+
+    if consecutive_key_pressesDown >= 3:
+        consecutive_key_pressesDown = 0
+        snakeSpeed = spedUpSnake
+        reset_counter()
+
+def on_key_release(event):
+    global consecutive_key_presses
+    global snakeSpeed
+
+    consecutive_key_presses = 0
+    snakeSpeed = normalSnakeSpeed
+
+def mixleft(event):
+
+
+    changeDirectionLeft(event)
+    on_key_pressLeft(event)
+
+def mixRight(event):
+
+    changeDirectionRight(event)
+    on_key_pressRight(event)
+
+def mixUp(event):
+
+
+    changeDirectionUp(event)
+    on_key_pressUp(event)
+
+def mixDown(event):
+
+
+    changeDirectionDown(event)
+    on_key_pressDown(event)
+
+def reset_counter():
+    global consecutive_key_pressesUp 
+    global consecutive_key_pressesDown 
+    global consecutive_key_pressesRight 
+    global consecutive_key_pressesLeft 
+    consecutive_key_pressesUp = 0
+    consecutive_key_pressesDown = 0
+    consecutive_key_pressesRight = 0
+    consecutive_key_pressesLeft = 0
 
 window = Tk()
 window.title("Snake game!")
@@ -141,6 +231,10 @@ window.resizable(False,False)
 
 score = 0
 direction = 'down'
+consecutive_key_pressesUp = 0
+consecutive_key_pressesDown = 0
+consecutive_key_pressesRight = 0
+consecutive_key_pressesLeft = 0
 
 label = Label(window, text=f"Score : {score}", font=("Arial", 50))
 label.pack()
@@ -160,10 +254,10 @@ y = int((screen_height/2) - (window_height/2))
 
 window.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
-window.bind('<Left>', changeDirectionLeft)
-window.bind('<Right>', changeDirectionRight)
-window.bind('<Up>', changeDirectionUp)
-window.bind('<Down>', changeDirectionDown)
+window.bind('<Left>', mixleft)
+window.bind('<Right>', mixRight)
+window.bind('<Up>', mixUp)
+window.bind('<Down>', mixDown)
 
 
 snake = Snake()
